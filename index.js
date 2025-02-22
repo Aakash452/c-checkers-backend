@@ -24,7 +24,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB Connection
-const MONGO_URI = "mongodb://localhost:27017/Checkers-db"; // Replace 'yourDatabaseName' with your DB name
+const MONGO_URI = process.env.MONGO_URI;
 
 mongoose
   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -66,7 +66,6 @@ app.post("/api/admin-login", async (req, res) => {
   try {
     // Find the user in the database
     const user = await Admin.findOne({ username });
-
     if (!user) {
       return res.status(401).json({ error: "Invalid username or password" });
     }
@@ -92,6 +91,28 @@ app.post("/api/admin-login", async (req, res) => {
     res.status(500).json({ error: "Error logging in" });
   }
 });
+
+
+// Query to add a new Admin
+
+// const insertAdmin = async () => {
+//   try {
+//     const hashedPassword = await bcrypt.hash("!Nashedi069!", 10); // Hash password
+
+//     const newAdmin = new Admin({
+//       username: "admin-checkers",
+//       password: hashedPassword, // Store encrypted password
+//     });
+
+//     await newAdmin.save();
+//     console.log("✅ Admin User Created Successfully!");
+//     mongoose.connection.close();
+//   } catch (error) {
+//     console.error("❌ Error inserting admin:", error);
+//     mongoose.connection.close();
+//   }
+// };
+
 
 // Start the server
 const PORT = process.env.PORT || 5000;
