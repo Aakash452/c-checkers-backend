@@ -67,13 +67,16 @@ app.post("/api/admin-login", async (req, res) => {
     // Find the user in the database
     const user = await Admin.findOne({ username });
     if (!user) {
+      console.log("boom")
       return res.status(401).json({ error: "Invalid username or password" });
+      
     }
 
     // Compare the provided password with the stored hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
+      console.log("Incorrect password")
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
@@ -115,7 +118,7 @@ app.post("/api/admin-login", async (req, res) => {
 
 
 // Start the server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const PORT =  5005;
+app.listen(PORT, () => {    
   console.log(`Server is running on port ${PORT}`);
 });

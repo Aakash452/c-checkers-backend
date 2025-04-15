@@ -81,7 +81,7 @@ router.get("/category/:category", async (req, res) => {
   try {
     const { category } = req.params;
     const products = await Product.find({ category });
-    console.log(products)
+   
 
     if (!products.length) {
       return res.status(404).json({ message: "No products found in this category" });
@@ -138,4 +138,47 @@ router.get("/image/:category/:filename", (req, res) => {
     }
   });
 });
+
+
+
+// GET the products by their category name
+router.get('/categories/:category', async (req, res) => {
+  try {
+    const category = req.params.category;
+    console.log("tried to find:", category);
+
+    const products = await Product.find({
+      category: { $regex: new RegExp(category, 'i') }, // case-insensitive match
+    }).limit(10);
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error('Error fetching products by category:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// /routes/products.js or wherever your product routes live
+
+router.get('/search', async (req, res) => {
+  try {
+    const query = req.query.query || '';
+
+    const regex = new RegExp(query, 'i'); // case-insensitive partial match
+
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: regex } },
+        { category: { $regex: regex } },
+        {brand : {$regex : regex}}
+      ]
+    }).limit(10); // fetch only 10 for now
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error('Search error:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 module.exports = router;
